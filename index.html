@@ -70,7 +70,7 @@ function render_item_extras(item) {
               + "</small>";
     for (let lbl of item.labels) {
         if (lbl.name != "ok-to-test") {
-            extras.innerHTML += `, <span class="badge badge-pill" style="background-color:#${lbl.color}">${lbl.name}</span>`;
+            extras.innerHTML += ` <span class="badge rounded-pill" style="background-color:#${lbl.color}">${lbl.name}</span>`;
         }
     }
     return extras;
