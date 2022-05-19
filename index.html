@@ -33,7 +33,7 @@ let query = "type:pr+sort:updated-desc+"
 
 let url = "https://api.github.com/search/issues?per_page=100&q=" + encodeURI(query);
 
-function render_item_link(item) {
+function renderPRTitle(item) {
     var text = item.title;
     let bzMatch = text.match(/^Bug #?([0-9]+): ?(.*)/);
     if (bzMatch) {
@@ -46,41 +46,53 @@ function render_item_link(item) {
 	text = jiraMatch[2];
     }
 
-    var title = document.createElement("p");
-    title.innerHTML = `<strong>${item.user.login}:</strong>`
-    title.innerHTML += ` <a href="${item.html_url}">#${item.number}</a>`;
+    var prTitle = document.createElement("h5");
+    prTitle.className = "card-title";
+    prTitle.innerHTML = ` <a href="${item.html_url}">#${item.number}</a>`;
     if (jiraMatch) {
-        title.innerHTML += ` <a href="https://issues.redhat.com/browse/${jiraMatch[1]}">${jiraMatch[1]}</a>`
+        prTitle.innerHTML += ` <a href="https://issues.redhat.com/browse/${jiraMatch[1]}">${jiraMatch[1]}</a>`
     }
 
-    title.innerHTML += ` <a href="${item.html_url}" class="text-reset text-decoration-none"> ${text}</a>`;
+    prTitle.innerHTML += ` <a href="${item.html_url}" class="text-reset text-decoration-none"> ${text}</a>`;
     if (bzMatch) {
-        title.innerHTML += ` <a class="small text-muted" `
-            + `href="https://bugzilla.redhat.com/show_bug.cgi?id=${bzMatch[1]}">[Bugzilla: ${bzMatch[1]}"]</a>`;
+        prTitle.innerHTML += ` <a href="https://bugzilla.redhat.com/show_bug.cgi?id=${bzMatch[1]}"> Bugzilla: ${bzMatch[1]}</a>`
     }
-    return title;
+    return prTitle;
 }
 
-function render_item_extras(item) {
-    var extras = document.createElement("p");
-    extras.innerHTML = "<small>Created: "
+function renderPRUpdateInfo(item) {
+    var updateInfo = document.createElement("p");
+    updateInfo.innerHTML = "<small>Created: "
               + item.created_at.replace("T", " ").replace("Z", " UTC")
               + ", updated: "
               + item.updated_at.replace("T", " ").replace("Z", " UTC")
               + "</small>";
-    for (let lbl of item.labels) {
-        if (lbl.name != "ok-to-test") {
-            extras.innerHTML += ` <span class="badge rounded-pill" style="background-color:#${lbl.color}">${lbl.name}</span>`;
-        }
-    }
-    return extras;
+    return updateInfo;
 }
 
-function render_item(item) {
+function renderPRLabels(item) {
+    var labels = document.createElement("p");
+    for (let lbl of item.labels) {
+        if (lbl.name != "ok-to-test") {
+            labels.innerHTML += ` <span class="badge rounded-pill" style="background-color:#${lbl.color}">${lbl.name}</span>`;
+        }
+    }
+    return labels;
+}
+
+function renderPR(item) {
     var li = document.createElement("li");
     li.className = "list-group-item";
-    li.appendChild(render_item_link(item));
-    li.appendChild(render_item_extras(item));
+    var PRCard = document.createElement("div");
+    PRCard.className = "row g-0";
+    PRCard.innerHTML = `<div class="col-md-1"><img src="${item.user.avatar_url}" class="img-fluid rounder-start" alt="${item.user.login}" style="max-height: 50px"></div>`;
+    var PRInfo = document.createElement("div");
+    PRInfo.className = "col-md";
+    PRInfo.appendChild(renderPRTitle(item));
+    PRInfo.appendChild(renderPRLabels(item));
+    PRCard.appendChild(PRInfo);
+    li.appendChild(PRCard);
+    li.appendChild(renderPRUpdateInfo(item));
     return li;
 }
 
@@ -95,7 +107,7 @@ function render_repo(repo, items) {
     let ul = document.createElement("ul");
     ul.className =  "list-group";
     for (let item of items) {
-        ul.appendChild(render_item(item));
+        ul.appendChild(renderPR(item));
     }
     let collapseDiv = document.createElement("div");
     collapseDiv.className = "collapse show";
