@@ -35,22 +35,28 @@ let url = "https://api.github.com/search/issues?per_page=100&q=" + encodeURI(que
 
 function render_item_link(item) {
     var text = item.title;
-    let match = text.match(/^Bug #?([0-9]+): ?(.*)/);
-    if (match) {
-        console.log("Item " + item.html_url + " contains bugzilla ID " + match[1]);
-        text = match[2];
+    let bzMatch = text.match(/^Bug #?([0-9]+): ?(.*)/);
+    if (bzMatch) {
+        console.log(`Item ${item.html_url} contains bugzilla ID ${bzMatch[1]}`);
+        text = bzMatch[2];
+    }
+    let jiraMatch = text.match(/^(AGENT-[0-9]+): ?(.*)/);
+    if (jiraMatch) {
+        console.log(`Item ${item.html_url} contains Jira reference ${jiraMatch[1]}`);
+	text = jiraMatch[2];
     }
 
     var title = document.createElement("p");
-    title.innerHTML = "<strong>" + item.user.login
-              + ":</strong> <a href=\"" + item.html_url + "\">#"
-              + item.number + "</a><a href=\"" + item.html_url
-              + "\" class=\"text-reset text-decoration-none\"> "
-              + text + "</a>";
-    if (match) {
-        title.innerHTML += " <a class=\"small text-muted\" href=\""
-              + "https://bugzilla.redhat.com/show_bug.cgi?id="
-              + match[1] + "\">[Bugzilla: " + match[1] + "]</a>";
+    title.innerHTML = `<strong>${item.user.login}:</strong>`
+    title.innerHTML += ` <a href="${item.html_url}">#${item.number}</a>`;
+    if (jiraMatch) {
+        title.innerHTML += ` <a href="https://issues.redhat.com/browse/${jiraMatch[1]}">${jiraMatch[1]}</a>`
+    }
+
+    title.innerHTML += ` <a href="${item.html_url}" class="text-reset text-decoration-none"> ${text}</a>`;
+    if (bzMatch) {
+        title.innerHTML += ` <a class="small text-muted" `
+            + `href="https://bugzilla.redhat.com/show_bug.cgi?id=${bzMatch[1]}">[Bugzilla: ${bzMatch[1]}"]</a>`;
     }
     return title;
 }
