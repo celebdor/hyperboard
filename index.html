@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <title>Metal3 review dashboard</title>
+  <title>OpenShift Agent team review dashboard</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="shortcut icon" type="image/png" href="/favicon.png">
@@ -19,15 +19,15 @@
   <script language="javascript">
 let query = "type:pr+sort:updated-desc+"
       // Organizations with all repositories:
-      + "org:metal3-io+org:openshift-metal3+"
       // Hand-picked openshift repositories:
-      + "repo:openshift/ironic-image+repo:openshift/ironic-inspector-image+"
-      + "repo:openshift/baremetal-operator+repo:openshift/cluster-baremetal-operator+"
-      + "repo:openshift/ironic-rhcos-downloader+"
-      + "repo:openshift/ironic-agent-image+"
-      + "repo:openshift/image-customization-controller+"
+      + "repo:openshift/installer+repo:openshift/assisted-service+"
+      + "repo:openshift/assisted-installer-agent+repo:openshift/assisted-installer+"
+      + "repo:openshift/release+repo:openshift-metal3/dev-scripts+"
+      + "repo:openshift/enhancements+"
       // Status filters:
       + "is:open+-status:failure+archived:false+"
+      // Team filters:
+      + "author:celebdor+author:rwsu+author:pawanpinjarkar+author:zaneb+author:lranjbar+author:andfasano+author:bfournie+"
       // Excluding labels:
       + "-label:bugzilla/invalid-bug+-label:do-not-merge/work-in-progress+-label:do-not-merge/hold";
 
