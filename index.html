@@ -80,6 +80,7 @@ function render_item_extras(item) {
 
 function render_item(item) {
     var li = document.createElement("li");
+    li.className = "list-group-item";
     li.appendChild(render_item_link(item));
     li.appendChild(render_item_extras(item));
     return li;
