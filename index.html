@@ -17,30 +17,63 @@
 <body class="bg-light" onload="get_issues()">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
   <script language="javascript">
-let query = "type:pr+sort:updated-desc+"
-      // Organizations with all repositories:
-      // Hand-picked openshift repositories:
-      + "repo:openshift/installer+repo:openshift/assisted-service+"
-      + "repo:openshift/assisted-installer-agent+repo:openshift/assisted-installer+"
-      + "repo:openshift/release+repo:openshift-metal3/dev-scripts+"
-      + "repo:openshift/enhancements+"
-      // Status filters:
-      + "is:open+-status:failure+archived:false+"
-      // Team filters:
-      + "author:celebdor+author:rwsu+author:pawanpinjarkar+author:zaneb+author:lranjbar+author:andfasano+author:bfournie+"
-      // Excluding labels:
-      + "-label:bugzilla/invalid-bug+-label:do-not-merge/work-in-progress+-label:do-not-merge/hold";
+let searchParams = new URLSearchParams(document.location.search);
+if (searchParams.has("repos")) {
+    repos = searchParams.get('repos').split(',');
+} else {
+    repos = [
+        "openshift/assisted-installer",
+        "openshift/assisted-installer-agent",
+        "openshift/assisted-service",
+        "openshift/enhancements",
+        "openshift/installer",
+        "openshift/release",
+        "openshift-metal3/dev-scripts",
+    ];
+}
 
-let url = "https://api.github.com/search/issues?per_page=100&q=" + encodeURI(query);
+var authors;
+if (searchParams.has("authors")) {
+    authors = searchParams.get("authors").split(',');
+} else {
+    authors = [
+        "andfasano",
+        "bfournie",
+        "celebdor",
+        "lranjbar",
+        "pawanpinjarkar",
+        "rwsu",
+        "zaneb",
+    ];
+}
+
+var filters;
+if (searchParams.has("labels")) {
+    filters = searchParams.get("labels").split(',');
+} else {
+    filters = [
+        "is:open",
+        "-status:failure",
+        "archived:false",
+        "-label:bugzilla/invalid-bug",
+        "-label:do-not-merge/work-in-progress",
+        "-label:do-not-merge/hold",
+    ];
+}
+const bzRegex = /^Bug #?([0-9]+): ?(.*)/;
+const jiraRegex = /^(AGENT-[0-9]+): ?(.*)/;
+
+let builtQuery = `type:pr+sort:updated-desc+${repos.map(x => "repo:" + x).join('+')}+${authors.map(x => "author:"+ x).join('+')}+${filters.join('+')}`;
+let url = "https://api.github.com/search/issues?per_page=100&q=" + encodeURI(builtQuery);
 
 function renderPRTitle(item) {
     var text = item.title;
-    let bzMatch = text.match(/^Bug #?([0-9]+): ?(.*)/);
+    let bzMatch = text.match(bzRegex);
     if (bzMatch) {
         console.log(`Item ${item.html_url} contains bugzilla ID ${bzMatch[1]}`);
         text = bzMatch[2];
     }
-    let jiraMatch = text.match(/^(AGENT-[0-9]+): ?(.*)/);
+    let jiraMatch = text.match(jiraRegex);
     if (jiraMatch) {
         console.log(`Item ${item.html_url} contains Jira reference ${jiraMatch[1]}`);
 	text = jiraMatch[2];
@@ -158,7 +191,7 @@ function render_response(items) {
 }
 
 async function get_issues() {
-    document.getElementById("query").innerHTML = query.replace(/\+/g, " ");
+    document.getElementById("query").innerHTML = builtQuery.replace(/\+/g, " ");
     console.log("Running query to github: " + query);
     var items = [];
     var page = 1;
