@@ -53,11 +53,8 @@ if (searchParams.has("labels")) {
 } else {
     filters = [
         "is:open",
-        "-status:failure",
         "archived:false",
-        "-label:bugzilla/invalid-bug",
         "-label:do-not-merge/work-in-progress",
-        "-label:do-not-merge/hold",
     ];
 }
 const bzRegex = /^Bug #?([0-9]+): ?(.*)/;
@@ -151,17 +148,7 @@ function render_repo(repo, items) {
 }
 
 function should_skip(item) {
-    var has_lgtm = false;
-    var has_approved = false;
-    for (let lbl of item.labels) {
-        if (lbl.name == "lgtm") {
-            has_lgtm = true;
-        }
-        if (lbl.name == "approved") {
-            has_approved = true;
-        }
-    }
-    return has_lgtm && has_approved;
+    return false;
 }
 
 function render_response(items) {
