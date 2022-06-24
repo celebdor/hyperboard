@@ -53,11 +53,8 @@ if (searchParams.has("labels")) {
 } else {
     filters = [
         "is:open",
-        "-status:failure",
         "archived:false",
-        "-label:bugzilla/invalid-bug",
         "-label:do-not-merge/work-in-progress",
-        "-label:do-not-merge/hold",
     ];
 }
 const bzRegex = /^Bug #?([0-9]+): ?(.*)/;
