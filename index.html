@@ -27,7 +27,9 @@ if (searchParams.has("repos")) {
         "openshift/assisted-service",
         "openshift/enhancements",
         "openshift/installer",
+        "openshift/openshift-docs",
         "openshift/release",
+        "openshift-agent-team/dashboard",
         "openshift-metal3/dev-scripts",
     ];
 }
@@ -37,10 +39,12 @@ if (searchParams.has("authors")) {
     authors = searchParams.get("authors").split(',');
 } else {
     authors = [
+        "amrita42",
         "andfasano",
         "bfournie",
         "celebdor",
         "lranjbar",
+        "mhanss",
         "pawanpinjarkar",
         "rwsu",
         "zaneb",
