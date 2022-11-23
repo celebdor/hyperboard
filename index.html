@@ -45,6 +45,7 @@ if (searchParams.has("authors")) {
         "celebdor",
         "lranjbar",
         "mhanss",
+        "openshift-cherrypick-robot",
         "pawanpinjarkar",
         "rwsu",
         "zaneb",
@@ -152,7 +153,16 @@ function render_repo(repo, items) {
 }
 
 function should_skip(item) {
-    return false;
+    if (item.user.login != 'openshift-cherrypick-robot') {
+      return false;
+    } else {
+      for (let assignee of item.assignees) {
+        if (authors.includes(assignee.login)) {
+          return false
+        }
+      }
+      return true
+    }
 }
 
 function render_response(items) {
