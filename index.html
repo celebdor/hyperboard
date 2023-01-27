@@ -22,6 +22,7 @@ if (searchParams.has("repos")) {
     repos = searchParams.get('repos').split(',');
 } else {
     repos = [
+        "openshift/agent-installer-utils",
         "openshift/assisted-installer",
         "openshift/assisted-installer-agent",
         "openshift/assisted-service",
