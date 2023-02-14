@@ -22,16 +22,13 @@ if (searchParams.has("repos")) {
     repos = searchParams.get('repos').split(',');
 } else {
     repos = [
-        "openshift/agent-installer-utils",
-        "openshift/assisted-installer",
-        "openshift/assisted-installer-agent",
-        "openshift/assisted-service",
+        "openshift/hypershift",
+        "openshift/hypershift-ops",
         "openshift/enhancements",
-        "openshift/installer",
         "openshift/openshift-docs",
         "openshift/release",
-        "openshift-agent-team/dashboard",
-        "openshift-metal3/dev-scripts",
+        "kubernetes-sigs/cluster-api",
+        "celebdor/hyperboard",
     ];
 }
 
@@ -40,15 +37,15 @@ if (searchParams.has("authors")) {
     authors = searchParams.get("authors").split(',');
 } else {
     authors = [
-        "amrita42",
-        "andfasano",
-        "bfournie",
+        "sjenning",
+        "csrwng",
+        "enxebre",
+        "jparrill",
+        "bryan-cox",
+        "muraee",
+        "imain",
         "celebdor",
-        "mhanss",
         "openshift-cherrypick-robot",
-        "pawanpinjarkar",
-        "rwsu",
-        "zaneb",
     ];
 }
 
@@ -63,7 +60,7 @@ if (searchParams.has("labels")) {
     ];
 }
 const bzRegex = /^Bug #?([0-9]+): ?(.*)/;
-const jiraRegex = /^((AGENT|OCPBUGS)-[0-9]+): ?(.*)/;
+const jiraRegex = /^((HOSTEDCP|OCPBUGS)-[0-9]+): ?(.*)/;
 
 let builtQuery = `type:pr+sort:updated-desc+${repos.map(x => "repo:" + x).join('+')}+${authors.map(x => "author:"+ x).join('+')}+${filters.join('+')}`;
 let url = "https://api.github.com/search/issues?per_page=100&q=" + encodeURI(builtQuery);
@@ -228,7 +225,7 @@ async function get_issues() {
       <code id="query"></code>
   </details>
   <p>Dashboard based on <a href="https://github.com/dtantsur/metal3-reviews">Metal3-reviews</a> by <a href="https://owlet.today">Dmitry Tantsur</a>.</p>
-  <p>Contribute <a href="https://github.com/openshift-agent-team/dashboard">on github</a>.</p>
+  <p>Contribute <a href="https://github.com/celebdor/hyperboard">on github</a>.</p>
 </footer>
 </body>
 </html>
